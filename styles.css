@@ -1,0 +1,131 @@
+body {
+    background-color: #303030;
+    color: #e0e0e0;
+    font-family: sans-serif;
+    font-weight: 600;
+    max-width: 60em;
+}
+div.header {
+    margin-left: 1em;
+    margin-right: 1em;
+    background-color: #505050;
+    border: solid 2px #703030;
+    padding: 1em 1em;
+    margin-bottom: 4em;
+}
+div.header div.userinfo, div.header div.loginlink {
+    float: right;
+}
+a {
+    text-decoration: none;
+    padding: 0.5em 1.0em;
+    color: #ffffff;
+}
+a:hover {
+    color: #e03030;
+}
+a:visited {
+    color: #ffffff;
+}
+a:visited:hover {
+    color: #e03030;
+}
+div.content {
+    margin-left: 2em;
+}
+div.heading {
+    margin-top: 2em;
+    margin-bottom: 0.5em;
+    color: #b04040;
+}
+div.formfield {
+    padding: 0.5em 1em;
+}
+div.formfield span.label {
+    display: inline-block;
+    width: 10em;
+}
+div.formfield input {
+    width: 15em;
+}
+div.formfield input#tosok {
+    width: auto;
+}
+div.formfield button {
+    width: 8em;
+    margin-left: 7.5em;
+    background-color: #703030;
+    color: #ffffff;
+    border-color: #904040;
+    padding-top: 0.4em;
+    padding-bottom: 0.4em;
+}
+div.error {
+    padding: 1em 2em;
+    background: #ffc0c0;
+    color: #000000;
+    margin: 2em 5em;
+    border: solid 2px #ff0000;
+}
+label a {
+    padding: 0 0;
+}
+li a {
+    padding: 0 0;
+}
+div.text {
+    margin-bottom: 1em;
+}
+form {
+    margin: 1em 0;
+}
+li {
+    margin-bottom: 0.5em;
+}
+img.gravatar {
+    float: left;
+    margin: 0em 2em;
+    border: solid 2px #703030;
+    background-color: #505050;
+    padding: 5px 5px;
+}
+span.ok {
+    color: #d03030;
+}
+span.page.current {
+    background: #e08080;
+    color: #000000;
+    border: solid 2px #803030;
+}
+div.teamlist {
+    margin-top: 2em;
+    padding-top: 1em;
+    margin-bottom: 2em;
+    padding-bottom: 1em;
+}
+div.teaminfo {
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+}
+div.teaminfo span.teamid {
+    display: inline-block;
+    width: 5em;
+}
+div.teaminfo span.teamname {
+    display: inline-block;
+    width: 25em;
+}
+div.teaminfo span.username {
+    display: inline-block;
+    width: 12em;
+}
+div.teaminfo span.details {
+    display: inline-block;
+    width: 5em;
+}
+div.info.team span {
+    display: inline-block;
+}
+div.info.team span.label {
+    width: 7em;
+}
