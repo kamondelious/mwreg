@@ -1,0 +1,41 @@
+
+- teams
+  - add button to request membership
+        /* team members are very likely to know the leader in real life already */
+    - send email to team admins if not already requested by this user
+    - add interface for leader to accept memberships
+      - send email to accepted member when accepted
+    - add interface to un-accept members, and also to make/unmake them admin
+    - add interface to un-approve mechs
+  - changing leader for a team is likely a manual operation
+  - team name change history and rate limiting?
+
+- mechs
+  - add button to create mech (creating user becomes builder)
+    - mech probably has team NULL or 0 until moved to a team
+    - edit mech page
+  - add button to add mech to team
+    - is this proposed or automatic for a team member?
+  - mech change history and rate limiting?
+
+- events
+  - add button to create new proposed event
+    - edit event page
+    - send email to site admins for proposed event
+    - add interface for admins to accept (and thus list) event
+  - do we allow event updates after approval?
+
+- improvements
+  - allow teams, mechs, and events to upload images and/or take URLs straight to flickr
+  - re-structure to use a single top-level loader script, and put utilities, views, and 
+    application logic into three separate directories.
+  - intra-team email/discussions
+  - event payment integration (stripe, paypal)
+  - keep track of teams/mechs/scores after events
+  - admin listing of all users
+
+- deployment
+  - host this somewhere real
+  - set up proper SSH access for trusted machine admins
+  - figure out what domain name to use
+  - make sure backups are taken on a regular basis
