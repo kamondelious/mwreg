@@ -6,6 +6,9 @@ mechs, and events. The code is purposefully simplistic and doesn't use any
 frameworks, to make moving to whatever hosting provider and environment simpler.
 The code assumes PHP 5.3 and a MySQL database.
 Configuration lives in config.php
+Also add a dbpassword.php file defining $DBSTRING, $DBUSER and $DBPASSWORD -- 
+this file is in .gitignore and should not be checked in!
+The schema for the database is found in MySQL-schema.sql
 
 General structure
 =================
