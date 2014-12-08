@@ -7,7 +7,9 @@ require_once 'pages.php';
 require_once 'teaminfo.php';
 
 $_action = @$_POST['action'];
-if ($_action == 'newteam') {
+if ($_action && !verify_csrf(@$_POST['csrf'])) {
+    $teams_error = "The server detected an error in editing the team. There is a time-out for editing each form.";
+} else if ($_action == 'newteam') {
     $_tid = make_new_team();
     if ($_tid) {
         $_GET['id'] = $_tid;
@@ -17,12 +19,10 @@ if ($_action == 'newteam') {
 } else if ($_action == 'editteam') {
     $_tid = @$_POST['id'];
     $_GET['id'] = $_tid;
-    if (!verify_csrf(@$_POST['csrf'])) {
-        $teams_error = "The server detected an error in editing the team. There is a time-out for editing each form.";
-    } else if (!(int)$_tid) {
+    $_team = get_team_by_id((int)$_tid);
+    if (!$_team) {
         $teams_error = "There is no such team.";
     } else {
-        $_team = get_team_by_id($_tid);
         if (is_team_admin($user['userid'], $_team)) {
             $_name = @$_POST['name'];
             $_url = @$_POST['url'];
@@ -38,6 +38,19 @@ if ($_action == 'newteam') {
         } else {
             $teams_error = "You do not have permission to edit this team.";
         }
+    }
+} else if ($_action == 'apply') {
+    $_tid = (int)@$_POST['id'];
+    $_team = get_team_by_id((int)$_tid);
+    $_GET['id'] = $_tid;
+    if (!$_team) {
+        $teams_error = "There is no such team.";
+    } else if (is_team_member($user['userid'], $_team)) {
+        $teams_error = "You are aready a member.";
+    } else {
+        db_query("INSERT INTO teammembers(teamid, userid, membersince) VALUES" .
+            "(:teamid, :userid, NOW()) ON DUPLICATE KEY UPDATE membersince=NOW()",
+                array('teamid'=>$_tid, 'userid'=>$user['userid']));
     }
 }
 require_once 'page/teams.php';

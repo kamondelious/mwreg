@@ -129,3 +129,6 @@ div.info.team span {
 div.info.team span.label {
     width: 7em;
 }
+.result {
+    color: #e0e030;
+}
