@@ -82,7 +82,7 @@ page_header('Mech Warfare Registration -- Teams');
         $_isadmin = false;
         $_applicant = false;
         foreach ($team['members'] as $member) {
-            echo "<div class='info teammember'>";
+            echo "<div class='info team'>";
             echo "<div class='userid'>".htmlquote($member['userid'])."</div>";
             echo "<div class='username'>".htmlquote($member['name'])."</div>";
             echo "<div class='membersince'>".htmlquote($member['membersince'])."</div>";
@@ -125,6 +125,28 @@ page_header('Mech Warfare Registration -- Teams');
             echo "<div class='text'>You are $_kind of this team.</div>";
         }
         echo "</div>";
+        if ($_islead) {
+            if ($team['applicants']) {
+                echo "<div class='heading'>Applicants</div>";
+                echo "<div class='list applicants'>";
+                foreach ($team['applicants'] as $member) {
+                    echo "<div class='info teammember'>";
+                    echo "<div class='userid'>".htmlquote($member['userid'])."</div>";
+                    echo "<div class='username'>".htmlquote($member['name'])."</div>";
+                    echo "<div class='membersince'>".htmlquote($member['membersince'])."</div>";
+                    echo "<div class='actions'>";
+                    formbtn("teams.php",
+                        array('id'=>$teamid, 'user'=>$member['userid'], 'action'=>'approve'),
+                        "Approve");
+                    formbtn("teams.php",
+                        array('id'=>$teamid, 'user'=>$member['userid'], 'action'=>'reject'),
+                        "Reject");
+                    echo "</div>";
+                    echo "</div>";
+                }
+                echo "</div>";
+            }
+        }
     } else if ($user) {
         echo "<div class='teamlist'>";
         echo "<div class='heading'>Registered Teams</div>";

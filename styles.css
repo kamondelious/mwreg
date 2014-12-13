@@ -132,3 +132,14 @@ div.info.team span.label {
 .result {
     color: #e0e030;
 }
+form.button {
+    display: inline-block;
+    background-color: #703030;
+    color: #ffffff;
+    border-color: #904040;
+    margin: 0.2em 0.2em;
+}
+div.list div.info div {
+    display: inline-block;
+    margin: 0.2em 0.5em;
+}
