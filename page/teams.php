@@ -13,9 +13,10 @@ page_header('Mech Warfare Registration -- Teams');
         if (!$team) {
             errors_fatal("There is no team ID $teamid");
         }
+        $_ismember = is_team_member($user['userid'], $team);
         if (is_team_admin($user['userid'], $team)) {
             //  edit form
-            $islead = true;
+            $_islead = true;
             function emit_field($team, $tag, $label) {
                 echo "<div class='formfield'><span class='label'>$label</span><span class='field'><input type='text' name='$tag' value='".htmlquote($team[$tag])."'/></span></div>";
             }
@@ -24,24 +25,24 @@ page_header('Mech Warfare Registration -- Teams');
             echo get_csrf_input();
         } else {
             //  team glory page
-            $islead = false;
+            $_islead = false;
             function emit_field($team, $tag, $label) {
                 echo "<div class='listfield'><span class='label'>$label</span><span class='value'>".htmlquote($team[$tag])."</span></div>";
             }
         }
         echo "<div class='info team'>";
         echo "<div class='heading'>Team</div>";
-        if ($team_ok) {
-            echo "<div class='result'>".htmlquote($team_ok)."</div>";
-        }
         echo "<div class='teamid'><span class='label'>ID</span><span class='value'>".htmlquote($team['teamid'])."</span></div>";
         emit_field($team, 'name', 'Team Name');
         emit_field($team, 'url', 'Team URL');
         echo "<div class='teamleader'><span class='label'>Leader</span><span class='value'>".htmlquote($team['leadername'])."</span></div>";
         echo "</div>";
-        if ($islead) {
+        if ($_islead) {
             echo "<div class='formfield'><span class='label'>&nbsp;</span><span class='value'><button name='action' value='editteam'>Update Team</button></span></div>";
             echo "</form>";
+        }
+        if ($team_ok) {
+            echo "<div class='result'>".htmlquote($team_ok)."</div>";
         }
         echo "<div class='list mechs'>";
         echo "<div class='heading'>Team Mechs</div>";
@@ -53,18 +54,99 @@ page_header('Mech Warfare Registration -- Teams');
             echo "<div class='mechbuilder'>".htmlquote($mech['builder'])."</div>";
             echo "</div>";
         }
+        if ($_ismember) {
+            $mechs = db_query("SELECT m.mechid AS mechid, m.name AS NAME, m.builder AS builder, m.team AS team, m.url AS URL, t.name AS teamname FROM mechs m LEFT OUTER JOIN teams t ON m.team = t.teamid WHERE builder=:userid",
+                    array('userid'=>$user['userid']));
+            if ($mechs) {
+                echo "<form method='post'>";
+                echo get_csrf_input();
+                echo "<div class='formfield'><span class='label'>Add Mech:</span><span class='value'>";
+                echo "<input type='select' name='mechid'>";
+                foreach ($mechs as $m) {
+                    $str = "";
+                    if ($m['team']) {
+                        $str = " (On team $m[teamname])";
+                    }
+                    echo "<option value='$m[mechid]'>".htmlquote($m['name'])."</option>";
+                }
+                echo "</input>";
+                echo "</span></div>";
+                echo "<div class='formfield'><span class='label'>&nbsp;</span><span class='value'>";
+                echo "<button name='action' value='addmech'>Add to Team</button></span></div>";
+                echo "</form>";
+            }
+        }
         echo "</div>";
         echo "<div class='list members'>";
         echo "<div class='heading'>Team Members</div>";
+        $_isadmin = false;
+        $_applicant = false;
         foreach ($team['members'] as $member) {
-            echo "<div class='info teammember'>";
+            echo "<div class='info team'>";
             echo "<div class='userid'>".htmlquote($member['userid'])."</div>";
             echo "<div class='username'>".htmlquote($member['name'])."</div>";
             echo "<div class='membersince'>".htmlquote($member['membersince'])."</div>";
             echo "<div class='teamadmin'>".htmlquote($member['teamadmin'])."</div>";
+            if ($team['leader'] === $member['userid']) {
+                echo "<div class='teamleader'>(Leader)</div>";
+            }
             echo "</div>";
+            if ($member['userid'] === $user['userid']) {
+                $_ismember = true;
+                if ($member['teamadmin']) {
+                    $_isadmin = true;
+                }
+            }
+        }
+        foreach ($team['applicants'] as $a) {
+            if ($a['userid'] == $user['userid']) {
+                $_applicant = true;
+                break;
+            }
+        }
+        if (!$_ismember && !$_applicant) {
+            echo "<form method='post'>";
+            echo get_csrf_input();
+            echo "<div class='formfield'><span class='label'>&nbsp;</span><span class='value'>";
+            echo "<button name='action' value='apply'>Apply for Membership</button></span></div>";
+            echo "<input type='hidden' name='id' value='".htmlquote($team['teamid'])."'/>";
+            echo "</form>";
+        } else {
+            $_kind = 'an applicant';
+            if ($_ismember) {
+                $_kind = 'a member';
+            }
+            if ($_islead) {
+                $kind = 'an administrator';
+            }
+            if ($team['leader'] === $user['userid']) {
+                $_kind = 'a leader';
+            }
+            echo "<div class='text'>You are $_kind of this team.</div>";
         }
         echo "</div>";
+        if ($_islead) {
+            if ($team['applicants']) {
+                echo "<div class='heading'>Applicants</div>";
+                echo "<div class='list applicants'>";
+                foreach ($team['applicants'] as $member) {
+                    echo "<div class='info teammember'>";
+                    echo "<div class='userid'>".htmlquote($member['userid'])."</div>";
+                    echo "<div class='username'>".htmlquote($member['name'])."</div>";
+                    echo "<div class='membersince'>".htmlquote($member['membersince'])."</div>";
+                    echo "<div class='actions'>";
+                    formbtn("teams.php",
+                        array('id'=>$teamid, 'user'=>$member['userid'], 'action'=>'approve'),
+                        "Approve");
+                    formbtn("teams.php",
+                        array('id'=>$teamid, 'user'=>$member['userid'], 'action'=>'reject'),
+                        "Reject");
+                    echo "</div>";
+                    echo "</div>";
+                }
+                echo "</div>";
+            }
+        }
     } else if ($user) {
         echo "<div class='teamlist'>";
         echo "<div class='heading'>Registered Teams</div>";

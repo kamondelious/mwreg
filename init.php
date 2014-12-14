@@ -2,6 +2,8 @@
 
 ob_start();
 
+error_log("$_SERVER[REQUEST_METHOD] $_SERVER[REQUEST_URI] $_SERVER[REMOTE_ADDR]");
+
 require_once 'config.php';
 
 $_ver = explode('.', phpversion());

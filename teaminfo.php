@@ -19,12 +19,14 @@ function make_new_team() {
             'url' => ""
         ),
         'teamid');
+    db_query("INSERT INTO teammembers(teamid, userid, membersice, teamadmin, approved) ".
+        "VALUES(:teamid, :userid, NOW(), 1, 1)", array('teamid'=>$newteam, 'userid'=>$user['userid']));
     return $newteam;
 }
 
 function get_team_by_id($teamid) {
     $t = db_query("SELECT t.name AS name, t.teamid AS teamid, t.url AS url, u.name AS leadername, u.userid AS leader " .
-            "FROM teams t, users u WHERE t.teamid=:teamid and u.userid = t.leader", array('teamid'=>$teamid));
+            "FROM teams t, users u WHERE t.teamid=:teamid and u.userid=t.leader", array('teamid'=>$teamid));
     if (!$t || !$t[0]) {
         return null;
     }
@@ -32,9 +34,19 @@ function get_team_by_id($teamid) {
     $c = db_query("SELECT m.mechid AS mechid, m.name AS name, m.url AS url, u.name AS builder " .
         "FROM mechs m, users u WHERE m.builder=u.userid AND m.team=:teamid", array('teamid'=>$teamid));
     $team['mechs'] = $c;
-    $c = db_query("SELECT u.name AS name, u.userid AS userid, tm.membersince AS membersince, tm.teamadmin AS teamadmin ".
+    $c = db_query("SELECT u.name AS name, u.userid AS userid, tm.membersince AS membersince, tm.teamadmin AS teamadmin, tm.approved as approved ".
             "FROM teammembers tm, users u WHERE tm.userid=u.userid AND tm.teamid=:teamid", array('teamid'=>$teamid));
-    $team['members'] = $c;
+    $members = array();
+    $applicants = array();
+    foreach ($c as $v) {
+        if ($v['approved']) {
+            $members[] = $v;
+        } else {
+            $applicants[] = $v;
+        }
+    }
+    $team['members'] = $members;
+    $team['applicants'] = $applicants;
     return $team;
 }
 
@@ -72,6 +84,18 @@ function is_team_admin($userid, array $team) {
     foreach ($team['members'] as $mem) {
         if ($mem['userid'] === $userid) {
             return $mem['teamadmin'];
+        }
+    }
+    return false;
+}
+
+function is_team_member($userid, array $team) {
+    if ($team['leader'] === $userid) {
+        return true;
+    }
+    foreach ($team['members'] as $mem) {
+        if ($mem['userid'] === $userid) {
+            return true;
         }
     }
     return false;
