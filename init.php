@@ -2,12 +2,20 @@
 
 ob_start();
 
-error_log("$_SERVER[REQUEST_METHOD] $_SERVER[REQUEST_URI] $_SERVER[REMOTE_ADDR]");
+$_data = '';
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $_data = $_POST;
+    @unset($_data['password']);
+    @unset($_data['password2']);
+    $_data = print_r($_data, true);
+}
+error_log("$_SERVER[REQUEST_METHOD] $_SERVER[REQUEST_URI] $_SERVER[REMOTE_ADDR] $data");
 
 require_once 'config.php';
 
 $_ver = explode('.', phpversion());
 if ($_ver[0] < '5' || ($_ver[0] === '5' && $_ver[1] < '5')) {
+    /* if I upgrade the PHP version, all passwords may suddenly become invalid... */
     function _password_work($pw, $iter, $salt) {
         for ($i = 0; $i != $iter; ++$i) {
             $pw = strtolower(hash('sha256', "$i+$salt+$pw"));
@@ -35,6 +43,9 @@ function logerror() {
         $args = $i['args'];
         if (array_key_exists("password", $args)) {
             $args['password'] = '******';
+        }
+        if (array_key_exists("password2", $args)) {
+            $args['password2'] = '******';
         }
         $bt[] = "$i[file]:$i[line]:$i[function](".
             implode(',', 

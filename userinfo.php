@@ -114,9 +114,9 @@ function user_register($name, $email, $password) {
     if (!$r) {
         return "Database error; cannot register user right now.";
     }
-    db_query("INSER INTO usernamelog(userid, name, setdate) VALUES(:userid, :name, NOW())",
+    db_query("INSERT INTO usernamelog(userid, name, setdate) VALUES(:userid, :name, NOW())",
         array('userid'=>$user['userid'], 'name'=>$name));
-    db_query("INSER INTO useremaillog(userid, email, setdate) VALUES(:userid, :email, NOW())",
+    db_query("INSERT INTO useremaillog(userid, email, setdate) VALUES(:userid, :email, NOW())",
         array('userid'=>$user['userid'], 'email'=>$email));
     $res = mail($email, "Verify your Mech Warfare Registration", 
         "You recently registered for the Mech Warfware site. Please click this URL to verify that the email you provided is correct.\n".
@@ -317,3 +317,6 @@ function user_change_password($user, $password) {
     return true;
 }
 
+function get_user_by_id($userid) {
+    return db_query("SELECT * FROM users WHERE userid=:id", array('id'=>$userid));
+}
