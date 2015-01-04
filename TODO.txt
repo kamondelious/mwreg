@@ -1,10 +1,10 @@
 
 - teams
-  - add button to request membership
+  + add button to request membership
         /* team members are very likely to know the leader in real life already */
-    - send email to team admins if not already requested by this user
-    - add interface for leader to accept memberships
-      - send email to accepted member when accepted
+    + send email to team admins if not already requested by this user
+    + add interface for leader to accept memberships
+      + send email to accepted member when accepted
     - add interface to un-accept members, and also to make/unmake them admin
     - add interface to un-approve mechs
   - changing leader for a team is likely a manual operation

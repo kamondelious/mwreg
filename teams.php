@@ -48,33 +48,35 @@ if ($_action && !verify_csrf(@$_POST['csrf'])) {
     } else if (is_team_member($user['userid'], $_team)) {
         $teams_error = "You are aready a member.";
     } else {
-        db_query("INSERT INTO teammembers(teamid, userid, membersince) VALUES" .
-            "(:teamid, :userid, NOW()) ON DUPLICATE KEY UPDATE membersince=NOW()",
-                array('teamid'=>$_tid, 'userid'=>$user['userid']));
+        apply_for_team($_tid, $user);
     }
 } else if ($_action == 'approve') {
     $_tid = @$_POST['id'];
     $_GET['id'] = $_tid;
     $_team = get_team_by_id((int)$_tid);
+    $_user = get_user_by_id((int)$_POST['user']);
     if (!$_team) {
         $teams_error = "There is no such team.";
+    } else if (!$_user) {
+        $teams_errir = "There is no such user.";
     } else if (!is_team_admin($user['userid'], $_team)) {
         $teams_error = "Only team admins can approve new memberships.";
     } else {
-        db_query("UPDATE teammembers SET approved=1 WHERE teamid=:teamid AND userid=:userid",
-            array('teamid'=>$_tid, 'userid'=>$_POST['user']));
+        approve_team_member($_tid, $_user);
     }
 } else if ($_action == 'reject') {
     $_tid = @$_POST['id'];
     $_GET['id'] = $_tid;
     $_team = get_team_by_id((int)$_tid);
+    $_user = get_user_by_id((int)$_POST['user']);
     if (!$_team) {
         $teams_error = "There is no such team.";
+    } else if (!$_user) {
+        $teams_error = "There is no such user.";
     } else if (!is_team_admin($user['userid'], $_team)) {
         $teams_error = "Only team admins can reject new memberships.";
     } else {
-        db_query("DELETE FROM teammembers WHERE teamid=:teamid AND userid=:userid",
-            array('teamid'=>$_tid, 'userid'=>$_POST['user']));
+        reject_team_member($_tid, $_user);
     }
 }
 require_once 'page/teams.php';

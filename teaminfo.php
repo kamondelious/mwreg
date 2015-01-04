@@ -19,7 +19,7 @@ function make_new_team() {
             'url' => ""
         ),
         'teamid');
-    db_query("INSERT INTO teammembers(teamid, userid, membersice, teamadmin, approved) ".
+    db_query("INSERT INTO teammembers(teamid, userid, membersince, teamadmin, approved) ".
         "VALUES(:teamid, :userid, NOW(), 1, 1)", array('teamid'=>$newteam, 'userid'=>$user['userid']));
     return $newteam;
 }
@@ -100,3 +100,51 @@ function is_team_member($userid, array $team) {
     }
     return false;
 }
+
+function apply_for_team($teamid, array$user) {
+    global $MAILFROM;
+    global $URLHOST;
+    global $ROOTPATH;
+    $team = get_team_by_id($teamid);
+    if (!$team) {
+        errors_fatal("There is no team $teamid");
+    }
+    db_query("INSERT INTO teammembers(teamid, userid, membersince) VALUES" .
+        "(:teamid, :userid, NOW()) ON DUPLICATE KEY UPDATE membersince=NOW()",
+            array('teamid'=>$teamid, 'userid'=>$user['userid']));
+    mail($user['email'],
+        "You applied for team $team[name]",
+        "You applied for membership in team $team[name] on Mech Warfare Registration.\n".
+        "Once the team administrator has approved your membership, you will be sent another email.\n",
+        "From: $MAILFROM");
+    $leader = get_user_by_id($team['leader']);
+    mail($leader['email'],
+        "User $user[name] applied for membership in team $team[name]",
+        "User $user[name] id $user[userid] applied for membership in team $team[name] on Mech Warfare Registration.\n".
+        "You can approve or reject this application in the team control panel.\n".
+        "$URLHOST$ROOTPATH/teams.php?id=$team[teamid]\n",
+        "From: $MAILFROM");
+}
+
+function approve_team_member($teamid, array $iuser) {
+    global $MAILFROM;
+    global $URLHOST;
+    global $ROOTPATH;
+    $team = get_team_by_id($teamid);
+    db_query("UPDATE teammembers SET approved=1 WHERE teamid=:teamid AND userid=:userid",
+        array('teamid'=>$teamid, 'userid'=>$iuser['userid']));
+    mail($iuser['email'],
+        "You were approved as member in team $team[name]",
+        "The administrator for team $team[name] on Mech Warfare Registration approved your application for membership.\n".
+        "You can view information about this team at:\n".
+        "$URLHOST$ROOTPATH/teams.php?id=$team[teamid]\n",
+        "From: $MAILFROM");
+}
+
+function reject_team_member($teamid, array $iuser) {
+    db_query("DELETE FROM teammembers WHERE teamid=:teamid AND userid=:userid",
+        array('teamid'=>$teamid, 'userid'=>$iuser));
+    // don't send email
+}
+
+
