@@ -135,10 +135,10 @@ page_header('Mech Warfare Registration -- Teams');
                     echo "<div class='username'>".htmlquote($member['name'])."</div>";
                     echo "<div class='membersince'>".htmlquote($member['membersince'])."</div>";
                     echo "<div class='actions'>";
-                    formbtn("teams.php",
+                    formbtn("/teams.php",
                         array('id'=>$teamid, 'user'=>$member['userid'], 'action'=>'approve'),
                         "Approve");
-                    formbtn("teams.php",
+                    formbtn("/teams.php",
                         array('id'=>$teamid, 'user'=>$member['userid'], 'action'=>'reject'),
                         "Reject");
                     echo "</div>";

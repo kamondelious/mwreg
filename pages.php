@@ -56,7 +56,7 @@ function redirect_to_top() {
 
 function formbtn($script, array $params, $name) {
     global $ROOTPATH;
-    echo "<form class='button' method='post' action='$ROOTPATH/$script'>";
+    echo "<form class='button' method='post' action='$ROOTPATH$script'>";
     echo get_csrf_input();
     foreacH ($params as $k => $v) {
         echo "<input type='hidden' name='".htmlquote($k)."' value='".htmlquote($v)."'/>";

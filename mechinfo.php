@@ -74,7 +74,7 @@ function add_mech_to_team($mechid, array $team) {
         "Your mech was added to team $team[name]",
         "The mech $mech[name] that you are listed as builder for was added \n".
         "to the team $team[name]. You can view the team roster at: \n".
-        "$URLHOST/$ROOTPATH/teams.php?id=$team[teamid]\n",
+        "$URLHOST$ROOTPATH/teams.php?id=$team[teamid]\n",
         "From: $MAILFROM");
 }
 

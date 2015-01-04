@@ -137,7 +137,7 @@ function approve_team_member($teamid, array $iuser) {
         "You were approved as member in team $team[name]",
         "The administrator for team $team[name] on Mech Warfare Registration approved your application for membership.\n".
         "You can view information about this team at:\n".
-       "$URLHOST/$ROOTPATH/teams.php?id=$team[teamid]\n",
+        "$URLHOST$ROOTPATH/teams.php?id=$team[teamid]\n",
         "From: $MAILFROM");
 }
 
