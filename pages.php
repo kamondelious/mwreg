@@ -13,21 +13,26 @@ function get_csrf_input() {
 function verify_csrf($csrf) {
     global $user;
     if (!$user) {
+        error_log("verify_csrf $csrf: no user");
         return false;
     }
     list ($uid, $time, $hash) = explode(':', $csrf);
     if (!$hash) {
+        error_log("verify_csrf $csrf: no hash");
         return false;
     }
     if ($uid != $user['userid']) {
+        error_log("verify_csrf $csrf: bad user");
         return false;
     }
     $now = time();
     if (($now > ($time + 1200)) || ($now < ($time - 60))) {
+        error_log("verify_csrf $csrf: bad time");
         return false;
     }
     $tok = hash_hmac('sha256', "$user[userid]:$time", "csrf prevention token secret");
     if ($tok !== $hash) {
+        error_log("verify_csrf $csrf: bad hash");
         return false;
     }
     return true;

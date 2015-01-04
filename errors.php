@@ -15,4 +15,5 @@ Oops! An error occurred. Please go back to the start and try again later. We sin
 If the error persists, please contact the site operator.
 </div>
 </div></body><?php
+exit;
 }

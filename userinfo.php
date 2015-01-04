@@ -318,5 +318,9 @@ function user_change_password($user, $password) {
 }
 
 function get_user_by_id($userid) {
-    return db_query("SELECT * FROM users WHERE userid=:id", array('id'=>$userid));
+    $ret = db_query("SELECT * FROM users WHERE userid=:id", array('id'=>$userid));
+    if (!is_array($ret)) {
+        return null;
+    }
+    return $ret[0];
 }

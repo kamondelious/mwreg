@@ -5,11 +5,11 @@ ob_start();
 $_data = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $_data = $_POST;
-    @unset($_data['password']);
-    @unset($_data['password2']);
+    if (isset($_data['password'])) $_data['password'] = '*****';
+    if (isset($_data['password2'])) $_data['password2'] = '*****';
     $_data = print_r($_data, true);
 }
-error_log("$_SERVER[REQUEST_METHOD] $_SERVER[REQUEST_URI] $_SERVER[REMOTE_ADDR] $data");
+error_log("$_SERVER[REQUEST_METHOD] $_SERVER[REQUEST_URI] $_SERVER[REMOTE_ADDR] $_data");
 
 require_once 'config.php';
 

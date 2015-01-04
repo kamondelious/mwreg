@@ -126,20 +126,24 @@ function apply_for_team($teamid, array$user) {
         "From: $MAILFROM");
 }
 
-function approve_team_member($teamid, array $user) {
+function approve_team_member($teamid, array $iuser) {
     global $MAILFROM;
+    global $URLHOST;
+    global $ROOTPATH;
     $team = get_team_by_id($teamid);
     db_query("UPDATE teammembers SET approved=1 WHERE teamid=:teamid AND userid=:userid",
-        array('teamid'=>$teamid, 'userid'=>$$user['userid']));
-    mail($user['email'],
+        array('teamid'=>$teamid, 'userid'=>$iuser['userid']));
+    mail($iuser['email'],
         "You were approved as member in team $team[name]",
-        "The administrator for team $team[name] on Mech Warfare Registration approved your application for membership.",
+        "The administrator for team $team[name] on Mech Warfare Registration approved your application for membership.\n".
+        "You can view information about this team at:\n".
+       "$URLHOST/$ROOTPATH/teams.php?id=$team[teamid]\n",
         "From: $MAILFROM");
 }
 
-function reject_team_member($teamid, array $user) {
+function reject_team_member($teamid, array $iuser) {
     db_query("DELETE FROM teammembers WHERE teamid=:teamid AND userid=:userid",
-        array('teamid'=>$teamid, 'userid'=>$user));
+        array('teamid'=>$teamid, 'userid'=>$iuser));
     // don't send email
 }
 
